@@ -69,7 +69,7 @@ class TestETag(object):
         r = sess.get(self.etag_url)
 
         # make sure we cached it
-        assert self.cache.get(self.etag_url) == r.raw
+        assert self.cache.get('GET+' + self.etag_url) == r.raw
 
         # make the same request
         resp = sess.get(self.etag_url)
@@ -118,7 +118,7 @@ class TestDisabledETags(object):
         r.headers["Date"] = "Tue, 26 Nov 2012 00:50:49 GMT"
         self.cache.set(self.etag_url, r.raw)
 
-        r = sess.get(self.etag_url)
+        r = sess.get('GET+' + self.etag_url)
         assert r.from_cache
         assert "if-none-match" in r.request.headers
         assert r.status_code == 200

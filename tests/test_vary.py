@@ -55,7 +55,7 @@ class TestVary(object):
         """
         s = sess.adapters["http://"].controller.serializer
         r = sess.get(self.url)
-        c = s.loads(r.request, self.cache.get(self.url))
+        c = s.loads(r.request, self.cache.get('GET+' + self.url))
 
         # make sure we cached it
         assert self.cached_equal(c, r)

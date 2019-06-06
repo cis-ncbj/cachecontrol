@@ -36,13 +36,13 @@ class TestMaxAge(object):
         """
         print("first request")
         r = sess.get(self.url)
-        assert self.cache.get(self.url) == r.raw
+        assert self.cache.get('GET+' + self.url) == r.raw
 
         print("second request")
         r = sess.get(self.url, headers={"Cache-Control": "max-age=0"})
 
         # don't remove from the cache
-        assert self.cache.get(self.url)
+        assert self.cache.get('GET+' + self.url)
         assert not r.from_cache
 
     def test_client_max_age_3600(self, sess):
@@ -51,7 +51,7 @@ class TestMaxAge(object):
         reasonable max-age value.
         """
         r = sess.get(self.url)
-        assert self.cache.get(self.url) == r.raw
+        assert self.cache.get('GET+' + self.url) == r.raw
 
         # request that we don't want a new one unless
         r = sess.get(self.url, headers={"Cache-Control": "max-age=3600"})
@@ -59,7 +59,7 @@ class TestMaxAge(object):
 
         # now lets grab one that forces a new request b/c the cache
         # has expired. To do that we'll inject a new time value.
-        resp = self.cache.get(self.url)
+        resp = self.cache.get('GET+' + self.url)
         resp.headers["date"] = "Tue, 15 Nov 1994 08:12:31 GMT"
         r = sess.get(self.url)
         assert not r.from_cache

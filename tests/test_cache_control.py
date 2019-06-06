@@ -181,7 +181,8 @@ class TestCacheControlRequest(object):
 
     def test_cache_request_fresh_max_age(self):
         now = time.strftime(TIME_FMT, time.gmtime())
-        resp = Mock(headers={"cache-control": "max-age=3600", "date": now})
+        # TODO: this method here is rather strange
+        resp = Mock(headers={"cache-control": "max-age=3600", "date": now}, method='GET')
 
         cache = DictCache({self.url: resp})
         self.c.cache = cache
@@ -200,7 +201,7 @@ class TestCacheControlRequest(object):
         later = time.time() + 86400  # GMT + 1 day
         expires = time.strftime(TIME_FMT, time.gmtime(later))
         now = time.strftime(TIME_FMT, time.gmtime())
-        resp = Mock(headers={"expires": expires, "date": now})
+        resp = Mock(headers={"expires": expires, "date": now}, method='GET')
         cache = DictCache({self.url: resp})
         self.c.cache = cache
         r = self.req({})
