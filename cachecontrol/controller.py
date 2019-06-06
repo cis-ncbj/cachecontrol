@@ -54,14 +54,14 @@ class CacheController(object):
 
         # Could do syntax based normalization of the URI before
         # computing the digest. See Section 6.2.2 of Std 66.
-        request_uri = query and "?".join([path, query]) or path
+        request_uri = "?".join([path, query]) if query else path
         defrag_uri = scheme + "://" + authority + request_uri
 
         return defrag_uri
 
     @classmethod
-    def cache_url(cls, uri):
-        return cls._urlnorm(uri)
+    def cache_url(cls, request):
+        return '+'.join([request.method, cls._urlnorm(request.url)])
 
     def parse_cache_control(self, headers):
         known_directives = {
@@ -122,7 +122,7 @@ class CacheController(object):
         Return a cached response if it exists in the cache, otherwise
         return False.
         """
-        cache_url = self.cache_url(request.url)
+        cache_url = self.cache_url(request)
         logger.debug('Looking up "%s" in the cache', cache_url)
         cc = self.parse_cache_control(request.headers)
 
@@ -229,7 +229,7 @@ class CacheController(object):
         return False
 
     def conditional_headers(self, request):
-        cache_url = self.cache_url(request.url)
+        cache_url = self.cache_url(request)
         resp = self.serializer.loads(request, self.cache.get(cache_url))
         new_headers = {}
 
@@ -276,7 +276,7 @@ class CacheController(object):
         cc_req = self.parse_cache_control(request.headers)
         cc = self.parse_cache_control(response_headers)
 
-        cache_url = self.cache_url(request.url)
+        cache_url = self.cache_url(request)
         logger.debug('Updating cache with response from "%s"', cache_url)
 
         # Delete it from the cache if we happen to have it stored there
@@ -342,7 +342,7 @@ class CacheController(object):
         This should only ever be called when we've sent an ETag and
         gotten a 304 as the response.
         """
-        cache_url = self.cache_url(request.url)
+        cache_url = self.cache_url(request)
 
         cached_response = self.serializer.loads(request, self.cache.get(cache_url))
 
