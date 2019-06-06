@@ -26,7 +26,7 @@ class TestCacheControllerResponse(object):
 
     def req(self, headers=None):
         headers = headers or {}
-        return Mock(full_url=self.url, url=self.url, headers=headers)  # < 1.x support
+        return Mock(full_url=self.url, url=self.url, headers=headers, method='GET')  # < 1.x support
 
     def resp(self, headers=None):
         headers = headers or {}
