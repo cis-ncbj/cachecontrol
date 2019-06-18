@@ -2,7 +2,7 @@ import setuptools
 
 long_description = open("README.rst").read()
 
-VERSION = "0.12.5"
+VERSION = "0.12.5-patched-head"
 
 setup_params = dict(
     name="CacheControl",
